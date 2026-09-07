@@ -1,3 +1,5 @@
+import pehatAvatar from '../pictures/peh.jpg';
+import johnPorkAvatar from '../pictures/jp.jpeg';
 import type { Chat, Message, User } from "../types/chat";
 
 export const currentUser: User = {
@@ -12,8 +14,8 @@ export const mockChats: Chat[] = [
         id: 'chat_1',
         participant: {
             id: '1',
-            name: 'John Doe',
-            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+            name: 'John Pork',
+            avatar: johnPorkAvatar,
             isOnline: true,
         },
         unreadCount: 2,
@@ -50,7 +52,7 @@ export const mockChats: Chat[] = [
         participant: {
             id: '3',
             name: 'Pehat',
-            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+            avatar: pehatAvatar,
             isOnline: true,
         },
         unreadCount: 1,
