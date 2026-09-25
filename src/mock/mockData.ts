@@ -18,7 +18,7 @@ export const mockChats: Chat[] = [
             avatar: johnPorkAvatar,
             isOnline: true,
         },
-        unreadCount: 2,
+        unreadCount: 1,
         lastMessage: {
             id: 'm1',
             chatId: 'chat_1',

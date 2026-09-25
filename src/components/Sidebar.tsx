@@ -4,7 +4,7 @@ import styles from './Sidebar.module.css';
 
 interface SidebarProps {
     chats: Chat[];
-    activeChatId: string;
+    activeChatId: string | null;
     onSelectChat: (chatId: string) => void;
 }
 
@@ -20,7 +20,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
             <div className={styles.chatList}>
                 {chats.map((chat) => {
-                    const isActive = chat.id == activeChatId;
+                    const isActive = chat.id === activeChatId;
 
                     return (
                         <div
