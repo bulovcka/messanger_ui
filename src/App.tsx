@@ -58,6 +58,50 @@ export default function App() {
                 }else {return chat}
             })
         });
+
+        setTimeout (() => {
+            handleReceiveMessage('Test', activeChatId);
+        }, 2000);
+    };
+
+    const handleReceiveMessage = (text: string, chatId: string) => {
+        const now: Date = new Date();
+        const time: string = now.toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'});
+        const findChat = chats.find((chat) => chat.id === chatId);
+        if (findChat === undefined){
+            return
+        }
+
+
+        const newMessage: Message = {
+            id: crypto.randomUUID(),
+            chatId: chatId,
+            senderId: findChat.participant.id,
+            text: text,
+            timestamp: time,
+            status: 'delivered'
+        };
+
+        setMessages((previousMessage) => ({
+            ...previousMessage,
+            [chatId]: [
+                ...(previousMessage[chatId] || []),
+                newMessage
+            ]
+        }));
+
+        setChats(previousChats => {
+            return previousChats.map((chat) =>{
+                if (chat.id === chatId){
+                    const unreadCounter = chatId === activeChatId ? chat.unreadCount + 1 : 0;
+                    return {
+                        ...chat,
+                        lastMessage: newMessage,
+                        unreadCount: unreadCounter
+                    }
+                }else{return chat}
+            })
+        })
     };
 
     return (
