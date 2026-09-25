@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import styles from './ChatArea.module.css';
 import type { Chat, Message } from '../types/chat';
 
@@ -12,6 +12,12 @@ interface ChatAreaProps {
 
 export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessage }) => {
     const [messageText, setMessageText] = useState<string>();
+    const bottomRef = useRef(null);
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({
+            behavior: 'smooth'
+        });
+    }, [messages.length, chat?.id]);
     const handleSubmit = ((event: React.FormEvent<HTMLFormElement>) =>{
         event.preventDefault();
         const trimmedText = messageText.trim();
@@ -57,6 +63,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessag
                         </div>
                     );
                 })}
+                <div ref={bottomRef}></div>
             </div>
             <footer className={styles.footer}>
                 <form onSubmit = {handleSubmit}>
