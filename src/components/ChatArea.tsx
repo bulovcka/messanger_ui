@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState } from 'react';
 import styles from './ChatArea.module.css';
 import type { Chat, Message } from '../types/chat';
 
@@ -6,14 +7,28 @@ import type { Chat, Message } from '../types/chat';
 interface ChatAreaProps {
     chat?: Chat;
     messages: Message[];
+    onSendMessage: (text: string) => void; 
 }
 
-export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages }) => {
+export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessage }) => {
+    const [messageText, setMessageText] = useState<string>();
+    const handleSubmit = ((event: React.FormEvent<HTMLFormElement>) =>{
+        event.preventDefault();
+        const trimmedText = messageText.trim();
+        if (!trimmedText){
+            return
+        }
+
+        onSendMessage(trimmedText);
+        setMessageText('');
+    })
+
     if (!chat) {
         return (
             <main className={styles.emptyState}>
                 <p>Select chat to start conversation</p>
             </main>
+
         );
     }
 
@@ -44,7 +59,13 @@ export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages }) => {
                 })}
             </div>
             <footer className={styles.footer}>
-                <input type='text' placeholder='Write a message...' className={styles.inputField} />
+                <form onSubmit = {handleSubmit}>
+                    <input 
+                    type='text' placeholder='Write a message...' className={styles.inputField} 
+                    value = {messageText}
+                    onChange = {(event) => setMessageText(event.target.value)}
+                    />
+                </form>
             </footer>
         </main>
     )
