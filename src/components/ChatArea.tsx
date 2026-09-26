@@ -12,11 +12,40 @@ interface ChatAreaProps {
 
 export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessage }) => {
     const [messageText, setMessageText] = useState<string>();
+    const [newMessagesCount, setNewMessagesCount] = useState<number>(0);
+    const previousChatIdRef = useRef<string | undefined>(undefined);
+    const isNearBottomRef = useRef(true);
     const bottomRef = useRef(null);
+    const messageFeedRef = useRef<HTMLDivElement | null>(null);
     useEffect(() => {
-        bottomRef.current?.scrollIntoView({
-            behavior: 'smooth'
-        });
+        if (previousChatIdRef.current === chat?.id){
+            const lastChatMessage = messages[messages.length - 1];
+            if (!lastChatMessage) { return }
+            if (lastChatMessage.senderId === "me") {
+                setNewMessagesCount(0);
+                bottomRef.current.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }else{
+                if (isNearBottomRef.current){
+                    setNewMessagesCount(0);
+                    bottomRef.current.scrollIntoView({
+                    behavior: 'smooth'
+                    });
+                }else{
+                    setNewMessagesCount(newMessagesCount => newMessagesCount + 1);
+                    console.log(newMessagesCount);
+                }
+            }
+
+        }else{
+            setNewMessagesCount(0);
+            previousChatIdRef.current = chat?.id;
+            bottomRef.current.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            return;
+        }
     }, [messages.length, chat?.id]);
     const handleSubmit = ((event: React.FormEvent<HTMLFormElement>) =>{
         event.preventDefault();
@@ -28,6 +57,20 @@ export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessag
         onSendMessage(trimmedText);
         setMessageText('');
     })
+
+    const handleScroll = () => {
+        const feed = messageFeedRef.current;
+        if (!feed){
+            return;
+        }
+
+        const distanceToBottom = feed.scrollHeight - feed.scrollTop - feed.clientHeight;
+
+        isNearBottomRef.current = distanceToBottom <= 100;
+
+        console.log(isNearBottomRef.current, distanceToBottom);
+
+    }
 
     if (!chat) {
         return (
@@ -51,7 +94,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessag
                     </span>
                 </div>
             </header>
-            <div className={styles.messageFeed}>
+            <div className={styles.messageFeed} ref={messageFeedRef} onScroll={handleScroll}>
                 {messages.map((msg) => {
                     const isMine = msg.senderId === 'me';
                     return (

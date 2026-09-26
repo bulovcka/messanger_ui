@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { mockChats, mockMessages } from './mock/mockData';
 import { ChatArea } from './components/ChatArea';
@@ -11,6 +11,11 @@ export default function App() {
     const [messages, setMessages] = useState<Record<string, Message[]>>(mockMessages);
     const currentMessages = activeChatId === null ? [] : messages[activeChatId] || [];
     const activeChat = chats.find((chat) => chat.id === activeChatId);
+
+    const activeChatIdRef = useRef<string | null>(activeChatId);
+    useEffect(() => {
+        activeChatIdRef.current = activeChatId;
+    }, [activeChatId]);
 
     const handleSelectedChat = (chatId: string) => {
         setActiveChatId(chatId);
@@ -93,7 +98,7 @@ export default function App() {
         setChats(previousChats => {
             return previousChats.map((chat) =>{
                 if (chat.id === chatId){
-                    const unreadCounter = chatId === activeChatId ? chat.unreadCount + 1 : 0;
+                    const unreadCounter = chatId === activeChatIdRef.current ? 0 : chat.unreadCount + 1;
                     return {
                         ...chat,
                         lastMessage: newMessage,
