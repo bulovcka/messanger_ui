@@ -2,6 +2,7 @@ import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import styles from './ChatArea.module.css';
 import type { Chat, Message } from '../types/chat';
+import { ChevronDown } from 'lucide-react';
 
 
 interface ChatAreaProps {
@@ -11,11 +12,12 @@ interface ChatAreaProps {
 }
 
 export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessage }) => {
-    const [messageText, setMessageText] = useState<string>();
+    const [messageText, setMessageText] = useState<string>("");
     const [newMessagesCount, setNewMessagesCount] = useState<number>(0);
     const previousChatIdRef = useRef<string | undefined>(undefined);
     const isNearBottomRef = useRef(true);
-    const bottomRef = useRef(null);
+    const bottomRef = useRef<HTMLDivElement | null>(null);
+    const [showScrollButton, setShowScrollButton] = useState<boolean>(false);
     const messageFeedRef = useRef<HTMLDivElement | null>(null);
     useEffect(() => {
         if (previousChatIdRef.current === chat?.id){
@@ -23,13 +25,13 @@ export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessag
             if (!lastChatMessage) { return }
             if (lastChatMessage.senderId === "me") {
                 setNewMessagesCount(0);
-                bottomRef.current.scrollIntoView({
+                bottomRef.current?.scrollIntoView({
                     behavior: 'smooth'
                 });
             }else{
                 if (isNearBottomRef.current){
                     setNewMessagesCount(0);
-                    bottomRef.current.scrollIntoView({
+                    bottomRef.current?.scrollIntoView({
                     behavior: 'smooth'
                     });
                 }else{
@@ -41,12 +43,22 @@ export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessag
         }else{
             setNewMessagesCount(0);
             previousChatIdRef.current = chat?.id;
-            bottomRef.current.scrollIntoView({
+            bottomRef.current?.scrollIntoView({
                     behavior: 'smooth'
                 });
             return;
         }
     }, [messages.length, chat?.id]);
+
+    const handleScrollButton = (() => {
+        bottomRef.current?.scrollIntoView({
+            behavior: 'smooth'
+        })
+
+        setNewMessagesCount(0)
+        isNearBottomRef.current = true;
+    });
+
     const handleSubmit = ((event: React.FormEvent<HTMLFormElement>) =>{
         event.preventDefault();
         const trimmedText = messageText.trim();
@@ -67,8 +79,13 @@ export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessag
         const distanceToBottom = feed.scrollHeight - feed.scrollTop - feed.clientHeight;
 
         isNearBottomRef.current = distanceToBottom <= 100;
-
-        console.log(isNearBottomRef.current, distanceToBottom);
+        
+        if (isNearBottomRef.current){
+            setShowScrollButton(false);
+            setNewMessagesCount(0);
+        }else{
+            setShowScrollButton(true);
+        }
 
     }
 
@@ -108,6 +125,20 @@ export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessag
                 })}
                 <div ref={bottomRef}></div>
             </div>
+            {
+                showScrollButton === true && (
+                    <button className={styles.scrollButton} onClick={handleScrollButton} aria-label='Перейти к сообщениям'>
+                <ChevronDown size={20}/>
+                {
+                    newMessagesCount > 0 && (
+                        <span className={styles.newMessagesBadge}>
+                            {newMessagesCount}
+                        </span>
+                    )
+                }
+            </button>
+                )
+            }
             <footer className={styles.footer}>
                 <form onSubmit = {handleSubmit}>
                     <input 

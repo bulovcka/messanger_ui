@@ -4,6 +4,7 @@
     flex-direction: column;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
 .emptyState {
@@ -119,4 +120,63 @@
 .inputField:focus {
     background-color: rgba(255, 255, 255, 0.25);
     border-color: rgba(255, 255, 255, 0.4);
+}
+
+.scrollButton{
+    position: absolute;
+    right: 24px;
+    bottom: 85px;
+    height: 44px;
+    width: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0.3;
+    background-color: rgba(30, 41, 59, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(10px);
+    color: white;
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.scrollButton:hover{
+    background-color: rgba(51, 65, 85, 0.96);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.34);
+}
+
+.scrollButton:active{
+    transform: translateY(0);
+}
+
+.scrollButton:focus-visible{
+    outline: 2px solid #60a5fa;
+    outline-offset: 2px;
+}
+
+.newMessagesBadge {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #172033;
+    border-radius: 50%;
+    background-color: #3b82f6;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
 }
