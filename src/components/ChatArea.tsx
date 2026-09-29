@@ -13,7 +13,7 @@ interface ChatAreaProps {
 
 export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessage }) => {
     const [messageText, setMessageText] = useState<string>("");
-    const [newMessagesCount, setNewMessagesCount] = useState<number>(0);
+    const [unseenMessagesIds, setUnseenMessagesId] = useState<string[]>([]);
     const previousChatIdRef = useRef<string | undefined>(undefined);
     const isNearBottomRef = useRef(true);
     const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -24,24 +24,31 @@ export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessag
             const lastChatMessage = messages[messages.length - 1];
             if (!lastChatMessage) { return }
             if (lastChatMessage.senderId === "me") {
-                setNewMessagesCount(0);
+
                 bottomRef.current?.scrollIntoView({
                     behavior: 'smooth'
                 });
             }else{
                 if (isNearBottomRef.current){
-                    setNewMessagesCount(0);
                     bottomRef.current?.scrollIntoView({
                     behavior: 'smooth'
                     });
                 }else{
-                    setNewMessagesCount(newMessagesCount => newMessagesCount + 1);
-                    console.log(newMessagesCount);
+                    setUnseenMessagesId((previousIds) => {
+                        if (previousIds.includes(lastChatMessage.id)){
+                            return previousIds;
+                        }else{
+                            return [
+                                ...previousIds,
+                                lastChatMessage.id
+                            ];
+                        }
+                    });
                 }
             }
 
         }else{
-            setNewMessagesCount(0);
+
             previousChatIdRef.current = chat?.id;
             bottomRef.current?.scrollIntoView({
                     behavior: 'smooth'
@@ -55,7 +62,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessag
             behavior: 'smooth'
         })
 
-        setNewMessagesCount(0)
+
         isNearBottomRef.current = true;
     });
 
@@ -82,12 +89,60 @@ export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessag
         
         if (isNearBottomRef.current){
             setShowScrollButton(false);
-            setNewMessagesCount(0);
+
         }else{
             setShowScrollButton(true);
         }
 
     }
+
+    useEffect(() => {
+        const feed = messageFeedRef.current
+        if (!feed){
+            return;
+        }
+
+        if (unseenMessagesIds.length === 0){
+            return;
+        }
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    const messageId = entry.target.getAttribute('data-message-id');
+                    console.log({
+                        messageId,
+                        isIntersecting: entry.isIntersecting,
+                        intersectionRatio: entry.intersectionRatio
+                    });
+                    if (messageId !== null && entry.intersectionRatio >= 0.5 && entry.isIntersecting === true ){
+                        setUnseenMessagesId((previousIds) => 
+                            previousIds.filter((id) => id !== messageId)
+                        );
+
+                        observer.unobserve(entry.target);
+                    }
+                })
+            },
+            {
+                root: feed,
+                threshold: 0.5
+            }
+        );
+
+        unseenMessagesIds.forEach((messageId) => {
+            const element = feed.querySelector(
+                `[data-message-id="${messageId}"]`
+            )
+            if (element) {
+                observer.observe(element);
+            }
+        })
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [unseenMessagesIds]);
 
     if (!chat) {
         return (
@@ -115,7 +170,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessag
                 {messages.map((msg) => {
                     const isMine = msg.senderId === 'me';
                     return (
-                        <div key={msg.id} className={`${styles.messageBubble} ${isMine ? styles.mine : styles.theirs} `}>
+                        <div key={msg.id} data-message-id={msg.id} className={`${styles.messageBubble} ${isMine ? styles.mine : styles.theirs} `}>
                             <div className={styles.messageText}>{msg.text}</div>
                             <div className={styles.timeStamp}>
                                 {msg.timestamp}
@@ -130,9 +185,9 @@ export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessag
                     <button className={styles.scrollButton} onClick={handleScrollButton} aria-label='Перейти к сообщениям'>
                 <ChevronDown size={20}/>
                 {
-                    newMessagesCount > 0 && (
+                    unseenMessagesIds.length > 0 && (
                         <span className={styles.newMessagesBadge}>
-                            {newMessagesCount}
+                            {unseenMessagesIds.length}
                         </span>
                     )
                 }
