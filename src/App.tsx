@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { mockChats, mockMessages } from './mock/mockData';
 import { ChatArea } from './components/ChatArea';
-import type { Chat, Message } from "./types/chat"
+import type { Chat, Message, MessageStatus } from "./types/chat"
 import styles from "./App.module.css";
 
 export default function App() {
@@ -16,6 +16,26 @@ export default function App() {
     useEffect(() => {
         activeChatIdRef.current = activeChatId;
     }, [activeChatId]);
+
+    const updateMessageStatus = (
+        chatId: string,
+        messageId: string,
+        status: MessageStatus
+    ) => {
+        setMessages((previousMessages) => ({
+            ...previousMessages,
+            [chatId]: (previousMessages[chatId] || []).map((message) => {
+                if (message.id === messageId) {
+                    return {
+                        ...message,
+                        status,
+                    };
+                }
+
+                return message;
+            }),
+        }));
+    }
 
     const handleSelectedChat = (chatId: string) => {
         setActiveChatId(chatId);
@@ -42,7 +62,7 @@ export default function App() {
             senderId: 'me',
             text: text,
             timestamp: time,
-            status: 'sent'
+            status: 'sending'
         };
 
         setMessages((previousMessages) => ({
@@ -63,6 +83,16 @@ export default function App() {
                 }else {return chat}
             })
         });
+
+        setTimeout (() => {
+            updateMessageStatus(newMessage.chatId, newMessage.id, 'sent')
+        }, 2000)
+        setTimeout (() => {
+            updateMessageStatus(newMessage.chatId, newMessage.id, 'delivered')
+        }, 2500)
+        setTimeout (() => {
+            updateMessageStatus(newMessage.chatId, newMessage.id, 'read')
+        }, 3000)
 
         setTimeout (() => {
             handleReceiveMessage('Test', activeChatId);
