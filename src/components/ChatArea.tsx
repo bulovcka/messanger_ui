@@ -13,7 +13,7 @@ interface ChatAreaProps {
 
 export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessage }) => {
     const [messageText, setMessageText] = useState<string>("");
-    const [unseenMessagesIds, setUnseenMessagesId] = useState<string[]>([]);
+    const [unseenMessagesIds, setUnseenMessagesIds] = useState<string[]>([]);
     const previousChatIdRef = useRef<string | undefined>(undefined);
     const isNearBottomRef = useRef(true);
     const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -34,7 +34,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessag
                     behavior: 'smooth'
                     });
                 }else{
-                    setUnseenMessagesId((previousIds) => {
+                    setUnseenMessagesIds((previousIds) => {
                         if (previousIds.includes(lastChatMessage.id)){
                             return previousIds;
                         }else{
@@ -48,22 +48,26 @@ export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessag
             }
 
         }else{
-
             previousChatIdRef.current = chat?.id;
-            bottomRef.current?.scrollIntoView({
-                    behavior: 'smooth'
+                bottomRef.current?.scrollIntoView({
+                        behavior: 'smooth'
                 });
-            return;
+                isNearBottomRef.current = true;
+                setUnseenMessagesIds([]);
+                setShowScrollButton(false);
         }
     }, [messages.length, chat?.id]);
 
     const handleScrollButton = (() => {
-        bottomRef.current?.scrollIntoView({
+
+        if (bottomRef.current !== null){
+            bottomRef.current.scrollIntoView({
             behavior: 'smooth'
         })
-
-
         isNearBottomRef.current = true;
+        setUnseenMessagesIds([]);
+        setShowScrollButton(false);
+        }
     });
 
     const handleSubmit = ((event: React.FormEvent<HTMLFormElement>) =>{
@@ -110,13 +114,8 @@ export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessag
             (entries) => {
                 entries.forEach((entry) => {
                     const messageId = entry.target.getAttribute('data-message-id');
-                    console.log({
-                        messageId,
-                        isIntersecting: entry.isIntersecting,
-                        intersectionRatio: entry.intersectionRatio
-                    });
                     if (messageId !== null && entry.intersectionRatio >= 0.5 && entry.isIntersecting === true ){
-                        setUnseenMessagesId((previousIds) => 
+                        setUnseenMessagesIds((previousIds) => 
                             previousIds.filter((id) => id !== messageId)
                         );
 
@@ -182,7 +181,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessag
             </div>
             {
                 showScrollButton === true && (
-                    <button className={styles.scrollButton} onClick={handleScrollButton} aria-label='Перейти к сообщениям'>
+                    <button type="button" className={styles.scrollButton} onClick={handleScrollButton} aria-label='Перейти к сообщениям'>
                 <ChevronDown size={20}/>
                 {
                     unseenMessagesIds.length > 0 && (
