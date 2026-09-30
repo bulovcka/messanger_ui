@@ -1,0 +1,117 @@
+.pageWrapper{
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    background-color: #AEC4D4;
+}
+
+.registrationContainer{
+    max-width: 400px;
+    width: 100%;
+    background-color: #ABD2FA;
+    padding: 20px;
+    border-radius: 30px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.registrationForm{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.formGroup{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.formGroup input{
+    padding: 10px;
+    border: 1px solid grey;
+    border-radius: 12px;
+    font-size: 16px;
+    color: black;
+    outline: none;
+}
+
+.formGroup input:focus{
+    border: 1px solid #7692FF;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.submitButton{
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    color: White;
+    font-size: 16px;
+    font-weight: 800;
+    background-color: #66A3BF;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.submitButton:hover{
+    background-color: #66A3B0;
+    
+}
+
+.submitButton:active{
+    background-color: #66A3B0;
+    transform: scale(0.95);
+}
+
+.loginPrompt{
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+    gap: 20px;
+    font-size: 14px;
+    align-items: center;
+    justify-content: center;
+}
+
+.logInButton{
+    outline: none;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.logInButton:hover{
+    text-decoration: underline;
+}
+
+.headerInfo{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+}
+
+.header{
+    font-size: 34px;
+    line-height: 1.1;
+}
+
+.info{
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+.formGroup input::placeholder{
+    opacity: 0.67;
+}
+
+.formGroup label {
+    font-size: 14px;
+    font-weight: 500;
+    padding-left: 2px;
+    line-height: 1.1;
+}
+
