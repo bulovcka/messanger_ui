@@ -1,5 +1,6 @@
 import styles from './RegisterPage.module.css';
 import { useState } from 'react';
+import { Eye } from 'lucide-react';
 
 
 export const RegisterPage = () => {
@@ -9,25 +10,26 @@ export const RegisterPage = () => {
         password: '',
         confirmPassword: ''
     })
-    const isPasswordMismatch = formData.confirmPassword.length > 0 && formData.confirmPassword !== formData.password;
-    const [validateUsername, setValidateUsername] = useState<boolean>(true);
-    const [validateEmail, setValidateEmail] = useState<boolean>(true);
-    const [validatePassword, setValidatePassword] = useState<boolean>(true);
-    const [validateConfirmPassword, setValidateConfirmPassword] = useState<boolean>(true);
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [usernameError, setUsernameError] = useState<string>('');
+    const [passwordError, setPasswordError] = useState<string>('');
+    const [passwordConfirmError, setPasswordConfirmError] = useState<string>('');
+    const [emailError, setEmailError] = useState<string>('');
 
 
     const handleChange = (field: keyof typeof formData, value: string) =>{
         if (field === "username"){
-            setValidateUsername(true);
+            setUsernameError('');
         }
         if (field === "email"){
-            setValidateEmail(true);
+            setEmailError('');
         }
         if (field === "password"){
-            setValidatePassword(true);
+            setPasswordConfirmError('');
+            setPasswordError('');
         }
         if (field === "confirmPassword"){
-            setValidateConfirmPassword(true);
+            setPasswordConfirmError('');
         }
         setFormData((previousData) => ({
             ...previousData,
@@ -35,29 +37,61 @@ export const RegisterPage = () => {
         }));
     }
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        if (isPasswordMismatch === true){
+    const handleShowButton = () => {
+        if (showPassword){
+            setShowPassword(false);
             return;
         }
+        setShowPassword(true);
+        return;
+    }
+
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
         if (formData.username.trim() === ""){
-            setValidateUsername(false);
+            setUsernameError('Enter your username');
+            return;
+        }
+        if (formData.username.length > 25){
+            setUsernameError('Username is too long');
+            return;
+        }
+        if (formData.username.length < 3){
+            setUsernameError('Username is too short');
+            return;
+        }
+        if (!/^[a-zA-Z0-9_]+$/.test(formData.username.trim())){
+            setUsernameError('Username can contain only latin symbols or numbers');
             return;
         }
         if (formData.email.trim() === ""){
-            setValidateEmail(false);
+            setEmailError('Email is empty')
+            return;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())){
+            setEmailError('Enter valid email');
             return;
         }
         if (formData.password.trim() === ""){
-            setValidatePassword(false);
+            setPasswordError('Password is empty');
+            return;
+        }
+        if (formData.password.length < 5){
+            setPasswordError('Password is too short');
             return;
         }
         if (formData.confirmPassword.trim() === ""){
-            setValidateConfirmPassword(false);
+            setPasswordConfirmError('This field is empty');
+            return;
+        }
+        if (isPasswordMismatch){
+            setPasswordConfirmError('Passwords do not match');
             return;
         }
         console.log('it works');
     }
+
+    const isPasswordMismatch = formData.confirmPassword.trim() !== "" && formData.password.trim() !== "" && formData.confirmPassword !== formData.password;
 
     return (
         <div className={styles.pageWrapper}>
@@ -80,8 +114,8 @@ export const RegisterPage = () => {
                             
                         />
                         {
-                            !validateUsername && (
-                                <div className={styles.usernameWarning}>username is empty</div>
+                            usernameError !== '' && (
+                                <div className={styles.warning}>{usernameError}</div>
                             )
                         }
                     </div>
@@ -98,15 +132,15 @@ export const RegisterPage = () => {
                             
                         />
                         {
-                            !validateEmail && (
-                                <div className={styles.usernameWarning}>email is empty</div>
+                            (emailError !== '') && (
+                                <div className={styles.warning}>{emailError}</div>
                             )
                         }
                     </div>
                     <div className={styles.formGroup}>
                         <label htmlFor="password">Password</label>
                         <input
-                            type="password" 
+                            type={showPassword ? 'text' : 'password'} 
                             id="password"
                             name ="password"
                             placeholder="Enter your password"
@@ -115,16 +149,20 @@ export const RegisterPage = () => {
                             required
                             
                         />
+                        
+                        <button type='button' className={styles.viewButton} onClick={handleShowButton}>
+                            <Eye size={15}/>
+                        </button>
                         {
-                            !validatePassword && (
-                                <div className={styles.usernameWarning}>password is empty</div>
+                            passwordError !== '' && (
+                                <div className={styles.warning}>{passwordError}</div>
                             )
                         }
                     </div>
                     <div className={styles.formGroup}>
                         <label htmlFor="confirm-password">Confirm password</label>
                         <input
-                            type="password" 
+                            type='password'
                             id="confirm-password"
                             name ="confirm-password"
                             placeholder="Enter your password again"
@@ -134,16 +172,11 @@ export const RegisterPage = () => {
                             
                         />
                         {
-                            !validateConfirmPassword && (
-                                <div className={styles.usernameWarning}>password is empty</div>
+                            passwordConfirmError !== '' && (
+                                <div className={styles.warning}>{passwordConfirmError}</div>
                             )
                         }
                     </div>
-                    {
-                        isPasswordMismatch && (
-                            <span className={styles.mismatch}>Passwords do not match</span>
-                        )
-                    }
                     <button type="submit" className={styles.submitButton}>Submit</button>
                 </form>
                 <div className={styles.loginPrompt}>
