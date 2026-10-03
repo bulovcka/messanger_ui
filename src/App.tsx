@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
+import {RegisterPage} from './components/RegisterPage';
+/* import { useState, useRef, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { mockChats, mockMessages } from './mock/mockData';
 import { ChatArea } from './components/ChatArea';
@@ -152,6 +153,15 @@ export default function App() {
                 messages={currentMessages}
                 onSendMessage= {handleSendMessage}
             />
+        </div>
+    );
+} */
+
+
+export default function App () {
+    return (
+        <div>
+            <RegisterPage/>
         </div>
     );
 }

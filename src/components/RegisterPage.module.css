@@ -35,6 +35,8 @@
     font-size: 16px;
     color: black;
     outline: none;
+    background-color: #E8F1F8;
+    border-color: #7F9FB5;
 }
 
 .formGroup input:focus{
@@ -112,6 +114,12 @@
     font-size: 14px;
     font-weight: 500;
     padding-left: 2px;
+    line-height: 1.1;
+}
+
+.mismatch{
+    color: darkred;
+    font-size: 10px;
     line-height: 1.1;
 }
 

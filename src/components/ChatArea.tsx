@@ -78,7 +78,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({ chat, messages, onSendMessag
             setUnseenMessagesIds([]);
             setShowScrollButton(false);
         }
-    }, [messages.length, chat?.id]);
+    }, [messages, messages.length, chat?.id]);
 
     const handleScrollButton = () => {
         if (bottomRef.current !== null) {
