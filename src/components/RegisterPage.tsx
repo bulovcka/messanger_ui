@@ -1,6 +1,6 @@
 import styles from './RegisterPage.module.css';
 import { useState } from 'react';
-import { Eye } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 
 
 export const RegisterPage = () => {
@@ -10,6 +10,8 @@ export const RegisterPage = () => {
         password: '',
         confirmPassword: ''
     })
+    const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [usernameError, setUsernameError] = useState<string>('');
     const [passwordError, setPasswordError] = useState<string>('');
@@ -37,17 +39,12 @@ export const RegisterPage = () => {
         }));
     }
 
-    const handleShowButton = () => {
-        if (showPassword){
-            setShowPassword(false);
-            return;
-        }
-        setShowPassword(true);
-        return;
-    }
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        if (isSubmitting === true){
+            return;
+        }
         if (formData.username.trim() === ""){
             setUsernameError('Enter your username');
             return;
@@ -88,7 +85,15 @@ export const RegisterPage = () => {
             setPasswordConfirmError('Passwords do not match');
             return;
         }
-        console.log('it works');
+        setIsSubmitting(true);
+        setTimeout(() => {
+            setIsSubmitting(false);
+            if (formData.username === 'taken'){
+                setUsernameError('This username is taken');
+                return;
+            }
+            console.log('it works');
+        }, 1500);
     }
 
     const isPasswordMismatch = formData.confirmPassword.trim() !== "" && formData.password.trim() !== "" && formData.confirmPassword !== formData.password;
@@ -111,6 +116,7 @@ export const RegisterPage = () => {
                             value = {formData.username}
                             onChange={(event) => handleChange('username', event?.target.value)}
                             required
+                            disabled={isSubmitting}
                             
                         />
                         {
@@ -129,7 +135,7 @@ export const RegisterPage = () => {
                             value={formData.email}
                             onChange={(event) => handleChange('email', event?.target.value)}
                             required
-                            
+                            disabled={isSubmitting}
                         />
                         {
                             (emailError !== '') && (
@@ -139,20 +145,24 @@ export const RegisterPage = () => {
                     </div>
                     <div className={styles.formGroup}>
                         <label htmlFor="password">Password</label>
-                        <input
-                            type={showPassword ? 'text' : 'password'} 
-                            id="password"
-                            name ="password"
-                            placeholder="Enter your password"
-                            value={formData.password}
-                            onChange = {(event) => handleChange('password', event?.target.value)}
-                            required
+                        <div className={styles.passwordForm}>
+                            <input
+                                type={showPassword ? 'text' : 'password'} 
+                                id="password"
+                                name ="password"
+                                placeholder="Enter your password"
+                                value={formData.password}
+                                onChange = {(event) => handleChange('password', event?.target.value)}
+                                required
+                                disabled={isSubmitting}
+                            />
                             
-                        />
-                        
-                        <button type='button' className={styles.viewButton} onClick={handleShowButton}>
-                            <Eye size={15}/>
-                        </button>
+                            <button type='button' className={styles.viewButton} onClick={() => setShowPassword(previous => !previous)}>
+                                {
+                                    !showPassword ? <Eye size={15}/> : <EyeOff size={15}/>
+                                }
+                            </button>
+                        </div>
                         {
                             passwordError !== '' && (
                                 <div className={styles.warning}>{passwordError}</div>
@@ -161,23 +171,33 @@ export const RegisterPage = () => {
                     </div>
                     <div className={styles.formGroup}>
                         <label htmlFor="confirm-password">Confirm password</label>
-                        <input
-                            type='password'
-                            id="confirm-password"
-                            name ="confirm-password"
-                            placeholder="Enter your password again"
-                            value={formData.confirmPassword}
-                            onChange={(event) => handleChange('confirmPassword', event?.target.value)}
-                            required
+                        <div className={styles.passwordForm}>
+                            <input
+                                type={showConfirmPassword ? 'text' : 'password'} 
+                                id="confirm-password"
+                                name ="confirm-password"
+                                placeholder="Enter your password"
+                                value={formData.confirmPassword}
+                                onChange = {(event) => handleChange('confirmPassword', event?.target.value)}
+                                required
+                                disabled={isSubmitting}
+                            />
                             
-                        />
+                            <button type='button' className={styles.viewButton} onClick={() => setShowConfirmPassword(previous => !previous)}>
+                                {
+                                    !showConfirmPassword ? <Eye size={15}/> : <EyeOff size={15}/>
+                                }
+                            </button>
+                        </div>
                         {
                             passwordConfirmError !== '' && (
                                 <div className={styles.warning}>{passwordConfirmError}</div>
                             )
                         }
                     </div>
-                    <button type="submit" className={styles.submitButton}>Submit</button>
+                    <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
+                        {!isSubmitting ? 'Submit' : 'Creating account...'}
+                    </button>
                 </form>
                 <div className={styles.loginPrompt}>
                     <span>Already have an account?</span>

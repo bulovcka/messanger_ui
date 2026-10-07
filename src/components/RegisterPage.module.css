@@ -123,3 +123,30 @@
     line-height: 1.1;
 }
 
+.passwordForm{
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    
+
+}
+
+.passwordForm input{
+    width: 100%;
+    padding-right: 44px;
+}
+
+.viewButton{
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+}
