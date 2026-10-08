@@ -1,0 +1,157 @@
+import { useState, useRef, useEffect } from 'react';
+import { Sidebar } from './Sidebar';
+import { mockChats, mockMessages } from '../mock/mockData';
+import { ChatArea } from './ChatArea';
+import type { Chat, Message, MessageStatus } from "../types/chat"
+import styles from "../App.module.css";
+
+export const MessangerPage = () => {
+    const [chats, setChats] = useState<Chat[]>(mockChats)
+    const [activeChatId, setActiveChatId] = useState<string | null>(null);
+    const [messages, setMessages] = useState<Record<string, Message[]>>(mockMessages);
+    const currentMessages = activeChatId === null ? [] : messages[activeChatId] || [];
+    const activeChat = chats.find((chat) => chat.id === activeChatId);
+
+    const activeChatIdRef = useRef<string | null>(activeChatId);
+    useEffect(() => {
+        activeChatIdRef.current = activeChatId;
+    }, [activeChatId]);
+
+    const updateMessageStatus = (
+        chatId: string,
+        messageId: string,
+        status: MessageStatus
+    ) => {
+        setMessages((previousMessages) => ({
+            ...previousMessages,
+            [chatId]: (previousMessages[chatId] || []).map((message) => {
+                if (message.id === messageId) {
+                    return {
+                        ...message,
+                        status,
+                    };
+                }
+
+                return message;
+            }),
+        }));
+    }
+
+    const handleSelectedChat = (chatId: string) => {
+        setActiveChatId(chatId);
+        setChats((previousChats) => {
+            return previousChats.map((chat) => {
+                if (chat.id === chatId){
+                    return {
+                        ...chat,
+                        unreadCount: 0
+                    };
+                }else {return chat}
+            });
+        });
+    }
+
+    const handleSendMessage = (text: string) => {
+        if (!activeChatId) {return}
+        const now: Date = new Date();
+        const time: string = now.toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'});
+
+        const newMessage: Message = {
+            id: crypto.randomUUID(),
+            chatId: activeChatId,
+            senderId: 'me',
+            text: text,
+            timestamp: time,
+            status: 'sending'
+        };
+
+        setMessages((previousMessages) => ({
+            ...previousMessages,
+            [activeChatId]: [
+                ...(previousMessages[activeChatId] || []),
+                newMessage
+            ]
+        }));
+
+        setChats((previousChats) => {
+            return previousChats.map((chat) => {
+                if (chat.id === activeChatId){
+                    return {
+                        ...chat,
+                        lastMessage: newMessage
+                    }
+                }else {return chat}
+            })
+        });
+
+        setTimeout (() => {
+            updateMessageStatus(newMessage.chatId, newMessage.id, 'sent')
+        }, 2000)
+        setTimeout (() => {
+            updateMessageStatus(newMessage.chatId, newMessage.id, 'delivered')
+        }, 2500)
+        setTimeout (() => {
+            updateMessageStatus(newMessage.chatId, newMessage.id, 'read')
+        }, 3000)
+
+        setTimeout (() => {
+            handleReceiveMessage('Test', activeChatId);
+        }, 2000);
+    };
+
+    const handleReceiveMessage = (text: string, chatId: string) => {
+        const now: Date = new Date();
+        const time: string = now.toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'});
+        const findChat = chats.find((chat) => chat.id === chatId);
+        if (findChat === undefined){
+            return
+        }
+
+
+        const newMessage: Message = {
+            id: crypto.randomUUID(),
+            chatId: chatId,
+            senderId: findChat.participant.id,
+            text: text,
+            timestamp: time,
+            status: 'delivered'
+        };
+
+        setMessages((previousMessage) => ({
+            ...previousMessage,
+            [chatId]: [
+                ...(previousMessage[chatId] || []),
+                newMessage
+            ]
+        }));
+
+        setChats(previousChats => {
+            return previousChats.map((chat) =>{
+                if (chat.id === chatId){
+                    const unreadCounter = chatId === activeChatIdRef.current ? 0 : chat.unreadCount + 1;
+                    return {
+                        ...chat,
+                        lastMessage: newMessage,
+                        unreadCount: unreadCounter
+                    }
+                }else{return chat}
+            })
+        })
+    };
+
+    return (
+        <div className={styles.container}>
+            <Sidebar
+                chats={chats}
+                activeChatId={activeChatId}
+                onSelectChat={handleSelectedChat}
+            />
+
+            <ChatArea
+                chat={activeChat}
+                messages={currentMessages}
+                onSendMessage= {handleSendMessage}
+            />
+        </div>
+    );
+}

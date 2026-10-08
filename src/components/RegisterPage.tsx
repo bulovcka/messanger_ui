@@ -3,7 +3,14 @@ import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 
 
-export const RegisterPage = () => {
+interface RegisterPageProps{
+    onRegisterSuccess: () => void;
+}
+
+
+export const RegisterPage: React.FC<RegisterPageProps> = ({
+    onRegisterSuccess
+}) => {
     const [formData, setFormData] = useState({
         username: '',
         email: '',
@@ -92,7 +99,7 @@ export const RegisterPage = () => {
                 setUsernameError('This username is taken');
                 return;
             }
-            console.log('it works');
+            onRegisterSuccess();
         }, 1500);
     }
 
