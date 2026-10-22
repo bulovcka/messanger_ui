@@ -211,7 +211,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                 </form>
                 <div className={styles.loginPrompt}>
                     <span>Already have an account?</span>
-                    <button type="button" className={styles.logInButton} onClick={() => onGoToLogin()}>Log in</button>
+                    <button type="button" className={styles.logInButton} disabled={isSubmitting} onClick={() => onGoToLogin()}>Log in</button>
                 </div>
             </div>
         </div>

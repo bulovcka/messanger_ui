@@ -77,7 +77,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                 <form className={styles.loginForm} onSubmit={(event) => handleLogin(event)} noValidate>
                     <div className={styles.headerInfo}>
                         <h1 className={styles.header}>Log in your account</h1>
-                        <span className={styles.info}>some text</span>
+                        <span className={styles.info}>Welcome to your comfortable messanger</span>
                     </div>
                     <div className={styles.formGroup}>
                         <label htmlFor="username">Username</label>
@@ -89,7 +89,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                             value = {formData.username}
                             onChange={(event) => handleChange('username', event?.target.value)}
                             required
-                            
+                            disabled={isSubmitting}
                         />
                         {
                             usernameErr !== "" && (
@@ -108,6 +108,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                                 value={formData.password}
                                 onChange={(event) => handleChange('password', event?.target.value)}
                                 required
+                                disabled={isSubmitting}
                             />
                             
                             <button type='button' className={styles.viewButton} onClick={() => setShowPassword(previous => !previous)}>
@@ -129,7 +130,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                 </form>
                 <div className={styles.registerPrompt}>
                     <span>Do you have an account</span>
-                    <button type="button" className={styles.registerButton} onClick={() => onGoToRegister()}>Enter your account</button>
+                    <button type="button" className={styles.registerButton} disabled={isSubmitting} onClick={() => onGoToRegister()}>Enter your account</button>
                 </div>
             </div>
         </div>
