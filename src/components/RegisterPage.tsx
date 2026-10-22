@@ -5,11 +5,13 @@ import { Eye, EyeOff } from 'lucide-react';
 
 interface RegisterPageProps{
     onRegisterSuccess: () => void;
+    onGoToLogin: () => void;
 }
 
 
 export const RegisterPage: React.FC<RegisterPageProps> = ({
-    onRegisterSuccess
+    onRegisterSuccess,
+    onGoToLogin
 }) => {
     const [formData, setFormData] = useState({
         username: '',
@@ -17,6 +19,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
         password: '',
         confirmPassword: ''
     })
+    
     const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -208,7 +211,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                 </form>
                 <div className={styles.loginPrompt}>
                     <span>Already have an account?</span>
-                    <button type="button" className={styles.logInButton}>Log in</button>
+                    <button type="button" className={styles.logInButton} onClick={() => onGoToLogin()}>Log in</button>
                 </div>
             </div>
         </div>

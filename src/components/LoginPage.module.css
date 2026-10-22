@@ -1,0 +1,159 @@
+.pageWrapper{
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    background-color: #AEC4D4;
+}
+
+.loginContainer{
+    max-width: 400px;
+    width: 100%;
+    background-color: #ABD2FA;
+    padding: 20px;
+    border-radius: 30px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.loginForm{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.formGroup{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.formGroup input{
+    padding: 10px;
+    border: 1px solid grey;
+    border-radius: 12px;
+    font-size: 16px;
+    color: black;
+    outline: none;
+    background-color: #E8F1F8;
+    border-color: #7F9FB5;
+}
+
+.formGroup input:focus{
+    border: 1px solid #7692FF;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.loginButton{
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    color: White;
+    font-size: 16px;
+    font-weight: 800;
+    background-color: #66A3BF;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.loginButton:hover{
+    background-color: #66A3B0;
+    
+}
+
+.loginButton:active{
+    background-color: #66A3B0;
+    transform: scale(0.95);
+}
+
+.registerPrompt{
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+    gap: 20px;
+    font-size: 14px;
+    align-items: center;
+    justify-content: center;
+}
+
+.registerButton{
+    outline: none;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.registerButton:hover{
+    text-decoration: underline;
+}
+
+.headerInfo{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+}
+
+.header{
+    font-size: 34px;
+    line-height: 1.1;
+}
+
+.info{
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+.formGroup input::placeholder{
+    opacity: 0.67;
+}
+
+.formGroup label {
+    font-size: 14px;
+    font-weight: 500;
+    padding-left: 2px;
+    line-height: 1.1;
+}
+
+.mismatch{
+    color: darkred;
+    font-size: 10px;
+    line-height: 1.1;
+}
+
+.passwordForm{
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    
+
+}
+
+.passwordForm input{
+    width: 100%;
+    padding-right: 44px;
+}
+
+.viewButton{
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+}
+
+.warning {
+    color: red;
+    font-size: 12px;
+    font-weight: 600;
+
+}
