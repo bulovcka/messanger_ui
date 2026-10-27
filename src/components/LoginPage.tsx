@@ -1,6 +1,7 @@
 import styles from './LoginPage.module.css';
 import { useState } from 'react';
 import {Eye, EyeOff} from 'lucide-react';
+import { AuthLayout } from './AuthLayout';
 
 interface LoginPageProps{
     onLoginSuccess: () => void;
@@ -72,9 +73,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({
         }, 1500);
     }
     return (
-        <div className={styles.pageWrapper}>
-            <div className={styles.loginContainer}>
-                <form className={styles.loginForm} onSubmit={(event) => handleLogin(event)} noValidate>
+        <AuthLayout>
+            <form className={styles.loginForm} onSubmit={(event) => handleLogin(event)} noValidate>
                     <div className={styles.headerInfo}>
                         <h1 className={styles.header}>Log in your account</h1>
                         <span className={styles.info}>Welcome to your comfortable messanger</span>
@@ -132,8 +132,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                     <span>Do you have an account</span>
                     <button type="button" className={styles.registerButton} disabled={isSubmitting} onClick={() => onGoToRegister()}>Enter your account</button>
                 </div>
-            </div>
-        </div>
+        </AuthLayout>
+                
     );
 }
 
