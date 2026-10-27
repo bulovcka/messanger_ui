@@ -1,6 +1,7 @@
 import styles from './RegisterPage.module.css';
 import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import { AuthLayout } from './AuthLayout';
 
 
 interface RegisterPageProps{
@@ -109,9 +110,8 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
     const isPasswordMismatch = formData.confirmPassword.trim() !== "" && formData.password.trim() !== "" && formData.confirmPassword !== formData.password;
 
     return (
-        <div className={styles.pageWrapper}>
-            <div className={styles.registrationContainer}>
-                <form className={styles.registrationForm} onSubmit={(event) => handleSubmit(event)} noValidate>
+        <AuthLayout>
+            <form className={styles.registrationForm} onSubmit={(event) => handleSubmit(event)} noValidate>
                     <div className={styles.headerInfo}>
                         <h1 className={styles.header}>Create your account</h1>
                         <span className={styles.info}>Sign up to start chatting</span>
@@ -213,8 +213,8 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                     <span>Already have an account?</span>
                     <button type="button" className={styles.logInButton} disabled={isSubmitting} onClick={() => onGoToLogin()}>Log in</button>
                 </div>
-            </div>
-        </div>
+        </AuthLayout>
+                
     );
 }
 

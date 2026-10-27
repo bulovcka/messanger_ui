@@ -1,4 +1,6 @@
 import styles from './WelcomePage.module.css'
+import { AuthLayout } from './AuthLayout';
+
 
 interface WelcomePageProps{
     onGoToLogin: () => void;
@@ -11,9 +13,8 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({
     onGoToRegister
 }) => {
     return (
-        <div className={styles.pageWrapper}>
-            <div className={styles.welcomePageContainer}>            
-                <div className={styles.header}>
+        <AuthLayout>
+            <div className={styles.header}>
                     <h1>Welcome to Olegity</h1>
                     <span>Stay connected. Start a conversation</span>
                 </div>
@@ -21,7 +22,6 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({
                     <button type='button' className={styles.forwardButton} onClick={onGoToRegister}>Register</button>
                     <button type='button' className={styles.forwardButton} onClick={onGoToLogin}>Log In</button>
                 </div>
-            </div>
-        </div>
+        </AuthLayout>
     );
 }

@@ -1,22 +1,4 @@
-.pageWrapper{
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    background-color: #AEC4D4;
-}
-
-.registrationContainer{
-    max-width: 400px;
-    width: 100%;
-    background-color: #ABD2FA;
-    padding: 20px;
-    border-radius: 30px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-}
-
-.registrationForm{
+    .registrationForm{
     display: flex;
     flex-direction: column;
     gap: 15px;
