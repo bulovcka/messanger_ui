@@ -59,7 +59,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
             return;
         }
         if (formData.password === ""){
-            setPasswordErr("password cannot be empty");
+            setPasswordErr("Password cannot be empty");
             return;
         }
         if (formData.password !== "123"){
@@ -130,7 +130,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                 </form>
                 <div className={styles.registerPrompt}>
                     <span>Do you have an account</span>
-                    <button type="button" className={styles.registerButton} disabled={isSubmitting} onClick={() => onGoToRegister()}>Enter your account</button>
+                    <button type="button" className={styles.registerButton} disabled={isSubmitting} onClick={() => onGoToRegister()}>Create it right now</button>
                 </div>
         </AuthLayout>
                 
