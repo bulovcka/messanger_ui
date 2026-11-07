@@ -19,10 +19,6 @@ export const EmailVerificationStep: React.FC<EmailVerificationStepProps> = ({
     return (
         <div className={styles.pageWrapper}>
             <div className={styles.codeForm}>
-                <div className={styles.emailVerfifcationInfo}>
-                    <h1>Verify your email</h1>
-                    <p>We have send you code</p>
-                </div>
                 <input
                     type="text" 
                     id="username"

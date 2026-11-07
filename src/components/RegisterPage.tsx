@@ -30,6 +30,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
     const [passwordConfirmError, setPasswordConfirmError] = useState<string>('');
     const [emailError, setEmailError] = useState<string>('');
     const [codeError, setCodeError] = useState<string>('');
+    const [registerStep, setRegisterStep] = useState<'account' | 'verification' | 'password'>('account');
 
     const handleChange = (field: keyof typeof formData, value: string) =>{
         if (field === "username"){
@@ -45,11 +46,23 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
         if (field === "confirmPassword"){
             setPasswordConfirmError('');
         }
+        if (field === 'code'){
+            setCodeError('');
+        }
         setFormData((previousData) => ({
             ...previousData,
             [field]: value
         }));
     }
+
+    const handleReturn = () => {
+        if (registerStep === 'password'){
+            setRegisterStep('account');
+        }
+        if (registerStep === 'verification'){
+            setRegisterStep('password');
+        }
+    };
 
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -57,55 +70,73 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
         if (isSubmitting === true){
             return;
         }
-        if (formData.username.trim() === ""){
+        if (registerStep === 'account') {
+            if (formData.username.trim() === ""){
             setUsernameError('Enter your username');
             return;
-        }
-        if (formData.username.length > 25){
-            setUsernameError('Username is too long');
-            return;
-        }
-        if (formData.username.length < 3){
-            setUsernameError('Username is too short');
-            return;
-        }
-        if (!/^[a-zA-Z0-9_]+$/.test(formData.username.trim())){
-            setUsernameError('Username can contain only latin symbols or numbers');
-            return;
-        }
-        if (formData.email.trim() === ""){
-            setEmailError('Email is empty')
-            return;
-        }
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())){
-            setEmailError('Enter valid email');
-            return;
-        }
-        if (formData.password.trim() === ""){
-            setPasswordError('Password is empty');
-            return;
-        }
-        if (formData.password.length < 5){
-            setPasswordError('Password is too short');
-            return;
-        }
-        if (formData.confirmPassword.trim() === ""){
-            setPasswordConfirmError('This field is empty');
-            return;
-        }
-        if (isPasswordMismatch){
-            setPasswordConfirmError('Passwords do not match');
-            return;
-        }
-        setIsSubmitting(true);
-        setTimeout(() => {
-            setIsSubmitting(false);
+            }
+            if (formData.username.length > 25){
+                setUsernameError('Username is too long');
+                return;
+            }
+            if (formData.username.length < 3){
+                setUsernameError('Username is too short');
+                return;
+            }
+            if (!/^[a-zA-Z0-9_]+$/.test(formData.username.trim())){
+                setUsernameError('Username can contain only latin symbols or numbers');
+                return;
+            }
+            if (formData.email.trim() === ""){
+                setEmailError('Email is empty')
+                return;
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())){
+                setEmailError('Enter valid email');
+                return;
+            }
             if (formData.username === 'taken'){
                 setUsernameError('This username is taken');
                 return;
             }
-            onRegisterSuccess();
-        }, 1500);
+            setRegisterStep('password');
+            return;
+        }
+        if (registerStep ==='password') {
+            if (formData.password.trim() === ""){
+            setPasswordError('Password is empty');
+            return;
+            }
+            if (formData.password.length < 5){
+                setPasswordError('Password is too short');
+                return;
+            }
+            if (formData.confirmPassword.trim() === ""){
+                setPasswordConfirmError('This field is empty');
+                return;
+            }
+            if (isPasswordMismatch){
+                setPasswordConfirmError('Passwords do not match');
+                return;
+            }
+            setRegisterStep('verification');
+            return;
+        }
+        if (registerStep === 'verification'){
+            if (formData.code.trim() === ''){
+                setCodeError('Code cannot be empty');
+                return;
+            }
+            if (formData.code.length !== 6){
+                setCodeError('Incorrect code');
+                return;
+            }
+            setIsSubmitting(true);
+            setTimeout(() => {
+                onRegisterSuccess;
+            },1500)
+            return;
+        }
     }
 
     const isPasswordMismatch = formData.confirmPassword.trim() !== "" && formData.password.trim() !== "" && formData.confirmPassword !== formData.password;
@@ -114,29 +145,61 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
         <AuthLayout>
             <form className={styles.registrationForm} onSubmit={(event) => handleSubmit(event)} noValidate>
                     <div className={styles.headerInfo}>
-                        <h1 className={styles.header}>Create your account</h1>
-                        <span className={styles.info}>Sign up to start chatting</span>
+                        <h1 className={styles.header}>
+                            {
+                                registerStep === 'account' ? 'Create your account'
+                                : registerStep === 'password' ? 'Create your password'
+                                : 'Verify your email'
+                            }
+                        </h1>
+                        <span className={styles.info}>
+                            {
+                                registerStep === 'account' ? 'Enter your username and email'
+                                : registerStep === 'password' ? 'Choose and confirm your password'
+                                : `We've sent a code to your email: ${formData.email}`
+                            }
+                        </span>
                     </div>
-                    <AccountDetailsStep
-                    username={formData.username} email={formData.email}
-                    usernameError={usernameError} emailError={emailError} 
-                    isSubmitting = {isSubmitting}
-                    handleChange = {handleChange}
-                    />
-                    <div className={styles.passwordForm}>
-                        <PasswordStep
-                        password ={formData.password} confirmPassword={formData.confirmPassword}
-                        passwordError={passwordError} confirmPasswordError={passwordConfirmError}
-                        isSubmitting = {isSubmitting} handleChange={handleChange}
-                        />
+                    {
+                        registerStep === 'account' && (
+                            <AccountDetailsStep
+                            username={formData.username} email={formData.email}
+                            usernameError={usernameError} emailError={emailError} 
+                            isSubmitting = {isSubmitting}
+                            handleChange = {handleChange}
+                            />
+                        )
+                    }
+                    {
+                        registerStep === 'password' && (
+                            <div className={styles.passwordForm}>
+                                <PasswordStep
+                                password ={formData.password} confirmPassword={formData.confirmPassword}
+                                passwordError={passwordError} confirmPasswordError={passwordConfirmError}
+                                isSubmitting = {isSubmitting} handleChange={handleChange}
+                                />
+                            </div>
+                        )
+                    }
+                    {
+                        registerStep === "verification" && (
+                            <div className={styles.emailVerification}>
+                                <EmailVerificationStep code={formData.code} codeError={codeError}
+                                isSubmitting={isSubmitting} handleChange={handleChange}
+                                />
+                            </div>
+                        )
+                    }
+                    <div className={styles.navButtons}>
+                        {
+                            registerStep !== "account" && (
+                                <button type="button" onClick={handleReturn}>Return</button>
+                            )
+                        }
+                        <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
+                            {!isSubmitting ? 'Next' : 'Creating account...'}
+                        </button>
                     </div>
-                    <div className={styles.emailVerification}>
-                        <EmailVerificationStep code={formData.code} codeError={codeError}
-                        isSubmitting={isSubmitting} handleChange={handleChange}/>
-                    </div>
-                    <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
-                        {!isSubmitting ? 'Submit' : 'Creating account...'}
-                    </button>
                 </form>
                 <div className={styles.loginPrompt}>
                     <span>Already have an account?</span>
