@@ -1,7 +1,9 @@
 import styles from './RegisterPage.module.css';
 import { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
 import { AuthLayout } from './AuthLayout';
+import { AccountDetailsStep} from './AccountDetailsStep';
+import { PasswordStep } from './PasswordStep';
+import { EmailVerificationStep } from './EmailVerificationStep';
 
 
 interface RegisterPageProps{
@@ -18,17 +20,16 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
         username: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        code: '',
     })
     
-    const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-    const [showPassword, setShowPassword] = useState<boolean>(false);
     const [usernameError, setUsernameError] = useState<string>('');
     const [passwordError, setPasswordError] = useState<string>('');
     const [passwordConfirmError, setPasswordConfirmError] = useState<string>('');
     const [emailError, setEmailError] = useState<string>('');
-
+    const [codeError, setCodeError] = useState<string>('');
 
     const handleChange = (field: keyof typeof formData, value: string) =>{
         if (field === "username"){
@@ -116,94 +117,22 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                         <h1 className={styles.header}>Create your account</h1>
                         <span className={styles.info}>Sign up to start chatting</span>
                     </div>
-                    <div className={styles.formGroup}>
-                        <label htmlFor="username">Username</label>
-                        <input
-                            type="text" 
-                            id="username"
-                            name ="username"
-                            placeholder="Enter your username"
-                            value = {formData.username}
-                            onChange={(event) => handleChange('username', event?.target.value)}
-                            required
-                            disabled={isSubmitting}
-                            
+                    <AccountDetailsStep
+                    username={formData.username} email={formData.email}
+                    usernameError={usernameError} emailError={emailError} 
+                    isSubmitting = {isSubmitting}
+                    handleChange = {handleChange}
+                    />
+                    <div className={styles.passwordForm}>
+                        <PasswordStep
+                        password ={formData.password} confirmPassword={formData.confirmPassword}
+                        passwordError={passwordError} confirmPasswordError={passwordConfirmError}
+                        isSubmitting = {isSubmitting} handleChange={handleChange}
                         />
-                        {
-                            usernameError !== '' && (
-                                <div className={styles.warning}>{usernameError}</div>
-                            )
-                        }
                     </div>
-                    <div className={styles.formGroup}>
-                        <label htmlFor="email">Email</label>
-                        <input
-                            type="email" 
-                            id="email"
-                            name ="email"
-                            placeholder="Enter your email"
-                            value={formData.email}
-                            onChange={(event) => handleChange('email', event?.target.value)}
-                            required
-                            disabled={isSubmitting}
-                        />
-                        {
-                            (emailError !== '') && (
-                                <div className={styles.warning}>{emailError}</div>
-                            )
-                        }
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label htmlFor="password">Password</label>
-                        <div className={styles.passwordForm}>
-                            <input
-                                type={showPassword ? 'text' : 'password'} 
-                                id="password"
-                                name ="password"
-                                placeholder="Enter your password"
-                                value={formData.password}
-                                onChange = {(event) => handleChange('password', event?.target.value)}
-                                required
-                                disabled={isSubmitting}
-                            />
-                            
-                            <button type='button' className={styles.viewButton} onClick={() => setShowPassword(previous => !previous)}>
-                                {
-                                    !showPassword ? <Eye size={15}/> : <EyeOff size={15}/>
-                                }
-                            </button>
-                        </div>
-                        {
-                            passwordError !== '' && (
-                                <div className={styles.warning}>{passwordError}</div>
-                            )
-                        }
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label htmlFor="confirm-password">Confirm password</label>
-                        <div className={styles.passwordForm}>
-                            <input
-                                type={showConfirmPassword ? 'text' : 'password'} 
-                                id="confirm-password"
-                                name ="confirm-password"
-                                placeholder="Enter your password"
-                                value={formData.confirmPassword}
-                                onChange = {(event) => handleChange('confirmPassword', event?.target.value)}
-                                required
-                                disabled={isSubmitting}
-                            />
-                            
-                            <button type='button' className={styles.viewButton} onClick={() => setShowConfirmPassword(previous => !previous)}>
-                                {
-                                    !showConfirmPassword ? <Eye size={15}/> : <EyeOff size={15}/>
-                                }
-                            </button>
-                        </div>
-                        {
-                            passwordConfirmError !== '' && (
-                                <div className={styles.warning}>{passwordConfirmError}</div>
-                            )
-                        }
+                    <div className={styles.emailVerification}>
+                        <EmailVerificationStep code={formData.code} codeError={codeError}
+                        isSubmitting={isSubmitting} handleChange={handleChange}/>
                     </div>
                     <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
                         {!isSubmitting ? 'Submit' : 'Creating account...'}

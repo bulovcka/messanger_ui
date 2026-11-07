@@ -1,4 +1,4 @@
-    .registrationForm{
+.registrationForm{
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -8,6 +8,7 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
+    width: 100%;
 }
 
 .formGroup input{
@@ -107,16 +108,14 @@
 
 .passwordForm{
     position: relative;
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
-    
 
 }
 
 .passwordForm input{
     width: 100%;
     padding-right: 44px;
+    flex-grow: 1;
+    max-width: 100%;
 }
 
 .viewButton{
