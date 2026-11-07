@@ -4,6 +4,7 @@ import { AuthLayout } from './AuthLayout';
 import { AccountDetailsStep} from './AccountDetailsStep';
 import { PasswordStep } from './PasswordStep';
 import { EmailVerificationStep } from './EmailVerificationStep';
+import { ProfileSetup } from './ProfileSetup';
 
 
 interface RegisterPageProps{
@@ -22,6 +23,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
         password: '',
         confirmPassword: '',
         code: '',
+        displayName: '',
     })
     
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -30,7 +32,8 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
     const [passwordConfirmError, setPasswordConfirmError] = useState<string>('');
     const [emailError, setEmailError] = useState<string>('');
     const [codeError, setCodeError] = useState<string>('');
-    const [registerStep, setRegisterStep] = useState<'account' | 'verification' | 'password'>('account');
+    const [registerStep, setRegisterStep] = useState<'account' | 'verification' | 'password' | 'displayName'>('account');
+    const [displayNameError, setDisplayNameError] = useState<string>('');
 
     const handleChange = (field: keyof typeof formData, value: string) =>{
         if (field === "username"){
@@ -131,6 +134,21 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                 setCodeError('Incorrect code');
                 return;
             }
+            setRegisterStep('displayName');
+        }
+        if (registerStep === "displayName") {
+            if (formData.displayName.trim() === '') {
+                setDisplayNameError('Nickname cannot be empty');
+                return;
+            }
+            if (formData.displayName.length < 3){
+                setDisplayNameError('Nickname is too short');
+                return;
+            }
+            if (formData.displayName.length > 25) {
+                setDisplayNameError('Nickname is too long');
+                return;
+            }
             setIsSubmitting(true);
             setTimeout(() => {
                 onRegisterSuccess;
@@ -149,14 +167,16 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                             {
                                 registerStep === 'account' ? 'Create your account'
                                 : registerStep === 'password' ? 'Create your password'
-                                : 'Verify your email'
+                                : registerStep === 'verification' ? 'Verify your email'
+                                : 'Enter yor nickname'
                             }
                         </h1>
                         <span className={styles.info}>
                             {
                                 registerStep === 'account' ? 'Enter your username and email'
                                 : registerStep === 'password' ? 'Choose and confirm your password'
-                                : `We've sent a code to your email: ${formData.email}`
+                                : registerStep === 'verification' ? `We've sent a code to your email: ${formData.email}`
+                                : 'poka niche ne pridumal'
                             }
                         </span>
                     </div>
@@ -185,6 +205,15 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                         registerStep === "verification" && (
                             <div className={styles.emailVerification}>
                                 <EmailVerificationStep code={formData.code} codeError={codeError}
+                                isSubmitting={isSubmitting} handleChange={handleChange}
+                                />
+                            </div>
+                        )
+                    }
+                    {
+                        registerStep === 'displayName' && (
+                            <div className={styles.displayNameForm}>
+                                <ProfileSetup displayName={formData.displayName} displayNameError={displayNameError}
                                 isSubmitting={isSubmitting} handleChange={handleChange}
                                 />
                             </div>

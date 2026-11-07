@@ -21,8 +21,8 @@ export const EmailVerificationStep: React.FC<EmailVerificationStepProps> = ({
             <div className={styles.codeForm}>
                 <input
                     type="text" 
-                    id="username"
-                    name ="username"
+                    id="code"
+                    name ="code"
                     placeholder="Enter code..."
                     value = {code}
                     onChange={(event) => handleChange('code', event?.target.value)}
@@ -36,7 +36,5 @@ export const EmailVerificationStep: React.FC<EmailVerificationStepProps> = ({
                     )
                 }
         </div>
-        
-        
     );
 }

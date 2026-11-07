@@ -1,0 +1,15 @@
+.displayNameForm {
+    margin-top: 10px;
+}
+
+.displayNameForm input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid grey;
+    border-radius: 12px;
+    font-size: 20px;
+    color: black;
+    outline: none;
+    background-color: #E8F1F8;
+    border-color: #7F9FB5;
+}
