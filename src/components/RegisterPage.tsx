@@ -52,6 +52,9 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
         if (field === 'code'){
             setCodeError('');
         }
+        if (field === 'displayName'){
+            setDisplayNameError('');
+        }
         setFormData((previousData) => ({
             ...previousData,
             [field]: value
@@ -151,7 +154,8 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
             }
             setIsSubmitting(true);
             setTimeout(() => {
-                onRegisterSuccess;
+                onRegisterSuccess();
+                setIsSubmitting(false);
             },1500)
             return;
         }
@@ -181,7 +185,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                         </span>
                     </div>
                     {
-                        registerStep === 'account' && (
+                        (registerStep === 'account') && (
                             <AccountDetailsStep
                             username={formData.username} email={formData.email}
                             usernameError={usernameError} emailError={emailError} 
@@ -221,7 +225,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                     }
                     <div className={styles.navButtons}>
                         {
-                            registerStep !== "account" && (
+                            (registerStep !== 'account' && registerStep !== 'displayName') && (
                                 <button type="button" onClick={handleReturn}>Return</button>
                             )
                         }
