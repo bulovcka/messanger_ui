@@ -54,10 +54,10 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
         }
         const timerId = setTimeout(() => {
             setResetCooldown(previous => previous - 1);
-            return () => {
-                clearTimeout(timerId)
-            };
         }, 1000)
+        return () => {
+                clearTimeout(timerId)
+        };
     }, [resetCooldown]);
     
     const handleChange = (field: keyof typeof formData, value: string) =>{
