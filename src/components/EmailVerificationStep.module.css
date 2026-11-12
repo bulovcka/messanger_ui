@@ -16,3 +16,25 @@
     text-align: center;
     letter-spacing: 3px;
 }
+
+
+.resendButton{
+    display: flex;
+    align-items: center;
+    border: none;
+    background-color: transparent;
+    text-decoration: underline;
+    font-size: 14px;
+    color: white;
+}
+
+.buttonSection{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.resendButton:hover{
+    cursor: pointer;
+}

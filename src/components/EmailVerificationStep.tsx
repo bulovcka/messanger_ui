@@ -6,6 +6,8 @@ interface EmailVerificationStepProps {
     codeError: string;
     isSubmitting: boolean;
     handleChange: (field: 'code', value: string) => void;
+    onCodeResend: () => void;
+    codeResetCooldown: number;
 }
 
 
@@ -13,7 +15,9 @@ export const EmailVerificationStep: React.FC<EmailVerificationStepProps> = ({
     code,
     codeError,
     isSubmitting,
-    handleChange
+    handleChange,
+    onCodeResend,
+    codeResetCooldown
 }) => {
 
     return (
@@ -35,6 +39,15 @@ export const EmailVerificationStep: React.FC<EmailVerificationStepProps> = ({
                         <div className={styles.warning}>{codeError}</div>
                     )
                 }
+                <div className={styles.buttonSection}>
+                    <button type='button' className={styles.resendButton}
+                    onClick={() => onCodeResend()}
+                    disabled={isSubmitting || codeResetCooldown > 0}>
+                        {
+                            codeResetCooldown > 0 ? `Resend in ${codeResetCooldown}s` : "Resend code"
+                        }
+                    </button>
+                </div>
         </div>
     );
 }

@@ -1,5 +1,5 @@
 import styles from './RegisterPage.module.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AuthLayout } from './AuthLayout';
 import { AccountDetailsStep} from './AccountDetailsStep';
 import { PasswordStep } from './PasswordStep';
@@ -34,7 +34,32 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
     const [codeError, setCodeError] = useState<string>('');
     const [registerStep, setRegisterStep] = useState<'account' | 'verification' | 'password' | 'displayName'>('account');
     const [displayNameError, setDisplayNameError] = useState<string>('');
+    const [resetCooldown, setResetCooldown] = useState<number>(0);
 
+    const handleResendCode = () => {
+        if (resetCooldown > 0 || isSubmitting){
+            return;
+        }
+        setFormData(previousData => ({
+            ...previousData,
+            code: ''
+        }));
+        setCodeError('');
+        setResetCooldown(30);
+    }
+
+    useEffect(() => {
+        if (resetCooldown <= 0) {
+            return;
+        }
+        const timerId = setTimeout(() => {
+            setResetCooldown(previous => previous - 1);
+            return () => {
+                clearTimeout(timerId)
+            };
+        }, 1000)
+    }, [resetCooldown]);
+    
     const handleChange = (field: keyof typeof formData, value: string) =>{
         if (field === "username"){
             setUsernameError('');
@@ -137,6 +162,14 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                 setCodeError('Incorrect code');
                 return;
             }
+            if (!/^[0-9]{6}$/.test(formData.code)){
+                setCodeError('Format Error');
+                return;
+            }
+            if (formData.code !== "123456"){
+                setCodeError('Incorrect code');
+                return;
+            }
             setRegisterStep('displayName');
         }
         if (registerStep === "displayName") {
@@ -144,7 +177,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                 setDisplayNameError('Nickname cannot be empty');
                 return;
             }
-            if (formData.displayName.length < 3){
+            if (formData.displayName.trim().length < 3){
                 setDisplayNameError('Nickname is too short');
                 return;
             }
@@ -210,6 +243,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                             <div className={styles.emailVerification}>
                                 <EmailVerificationStep code={formData.code} codeError={codeError}
                                 isSubmitting={isSubmitting} handleChange={handleChange}
+                                onCodeResend={handleResendCode} codeResetCooldown={resetCooldown}
                                 />
                             </div>
                         )
